@@ -1,0 +1,10 @@
+name = Stage File Proxy
+description = Proxies files from production server so you don't have to transfer them manually
+backdrop = 1.x
+type = module
+configure = admin/config/system/stage_file_proxy
+
+; Added by Backdrop CMS packaging script on 2019-04-19
+project = stage_file_proxy
+version = 1.x-1.9.0
+timestamp = 1555735232
