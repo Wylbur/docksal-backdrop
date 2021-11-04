@@ -1,1 +1,8 @@
 version: "2.1"
+
+services:
+  db:
+    image: docksal/mysql:5.7
+  cli:
+    image: docksal/cli:php7.4  # PHPMyAdmin
+    build: services/cli

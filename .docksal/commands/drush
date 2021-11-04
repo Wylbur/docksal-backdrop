@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+## Runs drush
+##
+## Usage: fin drush [params to passthrough]
+fin exec drush $@

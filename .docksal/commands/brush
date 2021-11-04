@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+## Runs brush
+##
+## Usage: fin brush [params to passthrough]
+fin exec brush $@

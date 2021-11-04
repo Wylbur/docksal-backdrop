@@ -1,0 +1,163 @@
+#!/usr/bin/env bash
+
+## Sync your local environment with fresh data and code from the development environment.
+##
+## Usage: fin sync pull
+##        Creates DB backup on remote and loads locally
+## Usage: fin sync <<db_file_in_project_root.tar.gz>>
+##        Loads local DB archive from project root directory
+
+# Abort if anything fails
+set -e
+
+## Start Process Timer
+start=$SECONDS
+
+# SETTINGS
+# See docksal.env
+
+# Windows check
+is_windows ()
+{
+  local res=$(uname | grep 'CYGWIN_NT')
+  if [[ "$res" != "" ]]; then
+    return 0
+  else
+    return 1
+  fi
+}
+
+
+# Execute
+if [[ "$PROJECT_ROOT" == "" ]]; then
+  echo-red "\$PROJECT_ROOT is not set!"
+  exit 1
+fi
+
+cd ${PROJECT_ROOT}
+
+# Check for a clean repository
+if ! [ -z "$(git status --untracked-files=no --porcelain)" ]; then
+  # Uncommitted changes in tracked files
+  echo -e
+  echo -e  "${red}WARNING: You have uncommitted changes in your branch.${NC}"
+  echo
+  git status
+  echo -e
+  read -p "Continue (y/n)?" choice
+    case "$choice" in 
+      y|Y ) echo "Fair Enough, let's continue!";;
+      n|N ) echo "Exiting"; exit;;
+      * ) echo "invalid";;
+    esac
+fi
+
+# Pull from Github
+echo -e  "${green_bg} git pull origin develop ${NC}${yellow} Pulling DEVELOP branch from Github...${NC}"
+#git fetch --all
+#git checkout develop
+#git pull 
+
+# Make sure docksal is running
+echo -e "${green_bg} fin restart ${NC}${yellow} Creating services...${NC}"
+fin restart
+
+# Start database sync
+if [ -n "$1" ]; then 
+  if [[ "$1" = 'pull' ]]; then
+    start2=$SECONDS
+    echo -e "${green_bg} Creating backup ${NC}${yellow} locally for import ${NC}"
+    # Clear caches on server
+    echo -e "${green_bg} fin brush cc ${NC}${yellow} clear caches on ${LIVE_WEBSITE_ALIAS} ${NC}"
+    fin brush $LIVE_WEBSITE_ALIAS cc all -y
+    echo -e "${green_bg} fin brush sql-dump ${NC}${yellow} to ${LIVE_BACKUP_LOCATION}${FILE_NAME} ${NC}"
+    fin brush $LIVE_WEBSITE_ALIAS sql-dump --gzip --result-file="${LIVE_BACKUP_LOCATION}${FILE_NAME}"
+    echo -e "${green_bg} scp ${FILE_NAME}.gz ${NC}${yellow} to local ${NC}"
+    scp $PORT ${SSH_AUTH}:${LIVE_BACKUP_LOCATION}${FILE_NAME}.gz ${LOC_BACKUP_LOCATION}${FILE_NAME}.gz
+    cp ${LOC_BACKUP_LOCATION}${FILE_NAME}.gz db.gz
+    if [ -f db.gz ]; then
+      echo -e "${green_bg} fin brush sql-drop ${NC}${yellow} empty local database ${NC}"
+     # fin brush sql-drop -y
+    fi
+    if [ -x "$(command -v pv)" ]; then
+      pv db.gz | gunzip | fin db import
+    else
+      gunzip -c db.gz | fin db import
+    fi
+    rm db.gz
+    ## Calculate Process time
+    duration2=$(( SECONDS - start2 ))
+  elif [[ "$1" =~ \.gz$ ]]; then
+    echo -e "${green_bg} fin brush sql-drop ${NC}${yellow} empty local database ${NC}"
+    fin brush sql-drop -y
+    echo -e "${green_bg} gunzip and fin db import ${NC}${yellow} Uncompress and load database backup locally ${NC}"
+    if [ -x "$(command -v pv)" ]; then
+      pv "$1" | gunzip | fin db import
+    else
+      gunzip -c "$1" | fin db import
+    fi
+  else
+    echo -e "${green_bg} fin brush sql-drop ${NC}${yellow} empty local database ${NC}"
+    fin brush sql-drop -y
+    echo -e "${green_bg} fin db import ${NC}${yellow} Import local database ${NC}"
+    fin db import "$1"
+  fi
+else
+  echo -e "${green_bg} no import ${NC}${yellow} No database sync  ${NC}"
+fi
+
+# Pull LIVE Config
+echo -e "${green_bg} rsync config ${NC}${yellow} get active config from ${LIVE_CONFIG_DIR} to ${LOC_CONFIG_DIR} ${NC}"
+if [[ "$1" = 'pull' ]]; then
+  rsync -rvz ${SSH_AUTH}:${LIVE_CONFIG_DIR} ${LOC_CONFIG_DIR}
+fi
+
+# Pull LIVE files
+echo -e "${green_bg} rsync files ${NC}${yellow} get files from ${LIVE_FILES_DIR} to ${LOC_FILES_DIR} ${NC}"
+if [[ "$1" = 'pull' ]]; then
+  rsync -rvz ${SSH_AUTH}:${LIVE_FILES_DIR} ${LOC_FILES_DIR}
+fi
+
+# Pull LIVE private
+echo -e "${green_bg} rsync private ${NC}${yellow} get private from ${LIVE_PRIVATE_DIR} ${LOC_PRIVATE_DIR} ${NC}"
+if [[ "$1" = 'pull' ]]; then
+  rsync -rvz ${SSH_AUTH}:${LIVE_PRIVATE_DIR} ${LOC_PRIVATE_DIR}
+fi
+
+cd ${DOCROOT_PATH}
+# Clear cache
+echo -e "${green_bg} brush cc ${NC}${yellow} Clearing caches...${NC}"
+fin brush cc all -y
+
+echo -e "${green_bg} fin brush dis ${NC}${yellow} Disable modules ${NC}"
+# fin brush dis  -y
+
+echo -e "${green_bg} fin brush en ${NC}${yellow} Enable modules ${NC}"
+fin brush en dblog devel field_ui views_ui stage_file_proxy -y
+
+# DB updates
+echo -e "${green_bg} fin brush updb ${NC}${yellow} Running database updates...${NC}"
+fin brush updb -y
+
+# Clear cache
+echo -e "${green_bg} fin brush cc ${NC}${yellow} Clearing caches...${NC}"
+fin brush cc all -y
+
+## Calculate Process time
+duration=$(( SECONDS - start ))
+## Echo Process time
+echo -e
+if [ "$1" == 'pull' ]; then
+  echo -e "${green_bg} Pull runtime ${NC}${yellow} ${duration2} seconds ${NC}"
+fi
+echo -e "${green_bg} Sync runtime ${NC}${yellow} ${duration} seconds ${NC}"
+echo -e
+echo -e "${green_bg} SYNC COMPLETE! ${NC} "
+echo -e "Open ${yellow}http://${VIRTUAL_HOST}${NC} in your browser to verify the setup.${NC}"
+echo -e
+echo -e "${green_bg} fin brush uli! ${NC} "
+fin brush uli
+
+exit
+
+sleep 2

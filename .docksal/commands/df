@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+## Compares configusing diff
+##
+## df a v
+
+cd ${PROJECT_ROOT}
+if [ -n "$2" ]; then
+  case "$1" in 
+    a ) FROM="active";
+    ;;
+    s ) FROM="staging";
+    ;;
+    v ) FROM="versioned";
+    ;;
+    * ) echo "a for active
+              s for staging
+              v for versioned"; exit;;
+  esac
+
+  case "$2" in 
+    a ) TO="active";
+    ;;
+    s ) TO="staging";
+    ;;
+    v ) TO="versioned";
+    ;;
+    * ) echo "a for active
+              s for staging
+              v for versioned"; exit;;
+  esac
+
+fin exec diff -uq --color ${PROJECT_ROOT}/config/"$1" ${PROJECT_ROOT}/config/"$1"
+
+else
+  echo "
+  Forget Something? like 
+  'config a v'
+  a for active
+  s for staging
+  v for versioned
+  "
+fi
