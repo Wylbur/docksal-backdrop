@@ -1,11 +1,22 @@
 # Docksal powered Backdrop Installation
 
-This is a sample Backdrop CMS installation pre-configured for use with Docksal.  
+This is a Backdrop CMS installation pre-configured for use with Docksal.  
 
 Features:
 
 - Backdrop CMS
-- `fin init` example
+- Bee install
+- Brush install
+- Drush install
+
+Custom `fin` commands
+
+- b (bee)
+- brush (brush)
+- drush (drush)
+
+- conf (copying config files between Active, Staging, Versioned folders)
+- df (displaying differences between config fimes in Active. Staging, Versioned folders)
 
 ## Setup instructions
 
@@ -17,11 +28,23 @@ Follow [Docksal environment setup instructions](https://docs.docksal.io/getting-
    
 ### Step 2: Project setup
 
-1. Clone this repo into your Projects directory
+1. Clone this repo into a local folder named for your project
 
     ```
-    git clone https://github.com/docksal/boilerplate-backdrop.git
-    cd backdrop
+    git clone https://gitlab.com/wylbur/docksal-backdrop.git project
+    cd project
+    ```
+
+- Remove the .git folder
+- Create a github or gitlab project
+- Initialize as the new git project
+
+    ```
+    git init
+    git add .
+    git commit -m 'message'
+    git remote add origin <gitlab-url>
+    git push -u origin main
     ```
 
 2. Initialize the site
