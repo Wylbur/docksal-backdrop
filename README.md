@@ -31,12 +31,12 @@ Follow [Docksal environment setup instructions](https://docs.docksal.io/getting-
 1. Clone this repo into a local folder named for your project
 
     ```
-    git clone https://gitlab.com/wylbur/docksal-backdrop.git project
-    cd project
+    git clone https://github.com/Wylbur/docksal-backdrop.git backdrop
+    cd backdrop
     ```
 
 - Remove the .git folder
-- Create a github or gitlab project
+- Create a git project
 - Initialize as the new git project
 
     ```
