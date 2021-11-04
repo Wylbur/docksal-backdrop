@@ -1,0 +1,3 @@
+# Ignore config folders
+/config/active
+/config/staging
