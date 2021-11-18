@@ -36,7 +36,7 @@ $settings['backdrop_drupal_compatibility'] = TRUE;
 /**
  * Testing to see if we are on the LIVE site
  */ 
-$live_host = "/home/username";
+$live_host = "/home/user/repo";
 if (is_dir($live_host)) {
   /* LIVE Site instructions*/
 

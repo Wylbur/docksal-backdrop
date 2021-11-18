@@ -2,17 +2,17 @@
 
 $database = 'mysql://user:pass@localhost/db';
 
-$config_directories['active'] = 'config/active';
-$config_directories['staging'] = 'config/staging';
+$config_directories['active'] = '/home/user/repo/config/active';
+$config_directories['staging'] = '/home/user/repo/config/staging';
 
-$settings['file_private_path'] = 'private';
+$settings['file_private_path'] = '/home/user/repo/private';
 
-$settings['hash_salt'] = 'N8QLPBCcluMMUCB-UrqAfDAqwaP1u3VN1HiubLObGh8';
+$settings['hash_salt'] = 'ohhellsyeah';
+
+$database_charset = 'utf8mb4';
 
 $settings['trusted_host_patterns'] = array(
   'domain\.com$'
 );
-
-$database_charset = 'utf8mb4';
 
 $base_url = 'https://domain.com'; // NO trailing slash!
