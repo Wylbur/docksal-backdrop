@@ -1,3 +1,20 @@
+# Ignore core file so it can be changed 
+/docroot/.gitignore
+
+# Ignore paths that contain user-generated content.
+docroot/files
+docroot/private
+docroot/sites/*/files
+docroot/sites/*/private
+
+# Ignore data files
+/*.mysql
+/*.sql
+/*.gz
+
 # Ignore config 
 /config/active/*.json
 /config/staging/*.json
+
+# Ignore private files
+/private/*
