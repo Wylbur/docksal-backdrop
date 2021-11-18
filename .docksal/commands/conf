@@ -4,7 +4,7 @@
 ##
 ## Usage: fin brush [params to passthrough]
 cd ${PROJECT_ROOT}
-if [ -n "$2" ]; then
+
   case "$1" in 
     a ) FROM="active";
     ;;
@@ -12,9 +12,8 @@ if [ -n "$2" ]; then
     ;;
     v ) FROM="versioned";
     ;;
-    * ) echo "a for active
-              s for staging
-              v for versioned"; exit;;
+    * ) FROM="active";
+    ;;
   esac
 
   case "$2" in 
@@ -24,13 +23,12 @@ if [ -n "$2" ]; then
     ;;
     v ) TO="versioned";
     ;;
-    * ) echo "a for active
-              s for staging
-              v for versioned"; exit;;
+    * ) TO="versioned";
+    ;;
   esac
 
   echo -e
-  echo "This will copy the config from "${PROJECT_ROOT}/${1}" to "${PROJECT_ROOT}/${2}".";
+  echo "This will copy the config from ${FROM} to ${TO} , ";
   read -p "Continue (y/n)?" choice
     case "$choice" in 
       y|Y ) echo "Fair Enough, let's continue!";;
@@ -38,14 +36,11 @@ if [ -n "$2" ]; then
       * ) echo "invalid";;
     esac
 
-fin exec cp -v ${PROJECT_ROOT}/config/"$1"/*.json ${PROJECT_ROOT}/config/"$2"
+  FILES=(/var/www/config/"$TO"/*.json);
+  if [ -e "${files-}" ];
+  then
+    fin exec rm ${FILES}
+  fi
+  fin exec rsync -v config/"$FROM"/*.json config/"$TO"
 
-else
-  echo "
-  Forget Something? like 
-  'config a v'
-  a for active
-  s for staging
-  v for versioned
-  "
-fi
+

@@ -4,5 +4,5 @@ services:
   db:
     image: docksal/mysql:5.7
   cli:
-    image: docksal/cli:php7.4  # PHPMyAdmin
+    image: ${COMPOSE_PROJECT_NAME_SAFE}_cli
     build: services/cli

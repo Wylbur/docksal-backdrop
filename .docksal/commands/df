@@ -4,7 +4,7 @@
 ## df a v
 
 cd ${PROJECT_ROOT}
-if [ -n "$2" ]; then
+
   case "$1" in 
     a ) FROM="active";
     ;;
@@ -12,9 +12,8 @@ if [ -n "$2" ]; then
     ;;
     v ) FROM="versioned";
     ;;
-    * ) echo "a for active
-              s for staging
-              v for versioned"; exit;;
+    * ) FROM="active";
+    ;;
   esac
 
   case "$2" in 
@@ -24,19 +23,10 @@ if [ -n "$2" ]; then
     ;;
     v ) TO="versioned";
     ;;
-    * ) echo "a for active
-              s for staging
-              v for versioned"; exit;;
+    * )  TO="versioned";
+    ;;
   esac
 
-fin exec diff -uq --color ${PROJECT_ROOT}/config/"$1" ${PROJECT_ROOT}/config/"$1"
+fin exec echo "File Differences | $FROM | $TO "
+fin exec diff --brief --color /var/www/config/"$FROM"/ /var/www/config/"$TO"/
 
-else
-  echo "
-  Forget Something? like 
-  'config a v'
-  a for active
-  s for staging
-  v for versioned
-  "
-fi
