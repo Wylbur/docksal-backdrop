@@ -1,0 +1,65 @@
+language: php
+
+php:
+  - 7.2
+cache:
+  directories:
+    - $HOME/.composer/cache/files
+    - $HOME/.composer/cache/repo
+services:
+  - mysql
+addons:
+  - mariadb: '10.3'
+before_install:
+  - composer self-update --1
+  - composer install
+  - git clone https://github.com/backdrop/backdrop /home/travis/web
+  - git clone https://github.com/drush-ops/drush /home/travis/web/drush
+  - cd /home/travis/web/drush && git checkout 8.x && composer install
+  - sudo ln -s /home/travis/web/drush/drush /usr/local/bin/drush
+  - cp -a /home/travis/build/backdrop-contrib/backdrop-drush-extension /home/travis/web/drush/commands/backdrop
+  - mysql -e "drop database if exists backdrop"
+  - mysql -e "create database backdrop"
+  - cd /home/travis/web
+  - drush si --db-url=mysql://root:@127.0.0.1/backdrop
+
+script:
+  # Check code standards
+  - cd /home/travis/web/drush/commands/backdrop
+  - vendor/bin/phpcs -n --standard=vendor/backdrop/coder/coder_sniffer/Backdrop --ignore="vendor/*,README.md" --extensions=install,module,php,inc,theme .
+
+  # Unit tests
+  - $TRAVIS_BUILD_DIR/vendor/bin/phpunit -c $TRAVIS_BUILD_DIR/tests
+
+  # Add some sanity checks; make sure drush commands exit 0.
+  - cd /home/travis/web
+  - drush cc drush
+  - drush st
+  - drush cc all
+  - drush dl devel headless
+  - drush en devel_generate headless -y
+  - drush pml
+  - drush dis devel headless -y
+  - drush pmu devel headless -y
+  - drush uli
+  - drush cron
+  - drush updb -y
+  - drush ucrt gff --password=gff --mail=gff@gff.gov
+  # - drush ws
+
+  # Make sure we can issue the same commands on D7 with backdrop/commands present.
+  - cd /home/travis
+  - drush dl --drupal-project-rename=drupal drupal-7.x
+  - mysql -e "create database drupal"
+  - cd /home/travis/drupal
+  - drush si --db-url=mysql://root:@127.0.0.1/drupal -y
+  - drush cc drush
+  - drush cc all
+  - drush dl devel -y
+  - drush en devel -y
+  - drush dis devel -y
+  - drush pmu devel -y
+  - drush updb -y
+  - drush ucrt gff --password=gff --mail=gff@gff.gov
+  - drush ws
+

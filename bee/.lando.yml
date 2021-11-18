@@ -1,0 +1,59 @@
+name: bee
+recipe: backdrop
+config:
+  php: 7.2
+  webroot: backdrop
+  database: mariadb
+  # Although Drush isn't needed/used, the version that Lando includes by default
+  # has a bug that causes all build steps to fail. We therefore need to update
+  # Drush to the latest version just to make sure that build steps run properly.
+  backdrush: 1.x-1.x
+services:
+  appserver:
+    build:
+      # Make symlink for `bee`.
+      - ln -s /app/bee.php /usr/local/bin/bee
+      # Download Backdrop.
+      - wget -q --show-progress -O /app/backdrop.zip https://github.com/backdrop/backdrop/archive/1.x.zip
+      # Download PHPUnit.
+      - wget -q --show-progress -O /app/phpunit https://phar.phpunit.de/phpunit-8.5.phar
+      - chmod +x /app/phpunit
+    run:
+      # Run setup tasks.
+      - /app/.lando/setup.sh setup
+  multisite:
+    type: php:7.2
+    webroot: multisite
+events:
+  pre-rebuild:
+    # Run clean-up tasks.
+    - /app/.lando/setup.sh clean
+    # Remove `bee` symlink, Backdrop and PHPUnit.
+    - rm -f /usr/local/bin/bee /app/backdrop.zip /app/phpunit
+  pre-destroy:
+    # Run clean-up tasks.
+    - /app/.lando/setup.sh clean
+    # Remove `bee` symlink, Backdrop and PHPUnit.
+    - rm -f /usr/local/bin/bee /app/backdrop.zip /app/phpunit
+tooling:
+  bee:
+    service: appserver
+    cmd: bee
+  reset:
+    service: appserver
+    cmd: /app/.lando/setup.sh
+  run-tests:
+    service: appserver
+    cmd:
+      - cd /app/backdrop && /app/phpunit --testsuite backdrop --configuration /app/tests
+      - cd /app/multisite && /app/phpunit --testsuite multisite --configuration /app/tests
+  # check-code:
+  #   service: appserver
+  #   cmd: /app/b/vendor/bin/phpcs --standard=/app/b/vendor/backdrop/coder/coder_sniffer/Backdrop --ignore=vendor/* /app/b
+proxy:
+  appserver:
+    - bee.lndo.site
+  multisite:
+    - multi-1.lndo.site
+    - multi-2.lndo.site
+    - install-test.lndo.site

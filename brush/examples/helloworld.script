@@ -1,0 +1,50 @@
+#!/usr/bin/env brush
+
+//
+// This example demonstrates how to write a brush
+// "shebang" script.  These scripts start with the
+// line "#!/usr/bin/env brush" or "#!/full/path/to/brush".
+//
+// See `brush topic docs-scripts` for more information.
+//
+brush_print("Hello world!");
+brush_print();
+brush_print("The arguments to this command were:");
+
+//
+// If called with --everything, use brush_get_arguments
+// to print the commandline arguments.  Note that this
+// call will include 'php-script' (the brush command)
+// and the path to this script.
+//
+if (brush_get_option('everything')) {
+  brush_print("  " . implode("\n  ", brush_get_arguments()));
+}
+//
+// If --everything is not included, then use
+// brush_shift to pull off the arguments one at
+// a time.  brush_shift only returns the user
+// commandline arguments, and does not include
+// the brush command or the path to this script.
+//
+else {
+  while ($arg = brush_shift()) {
+    brush_print('  ' . $arg);
+  }
+}
+
+brush_print();
+
+//
+// We can check which site was bootstrapped via
+// the '@self' alias, which is defined only if
+// there is a bootstrapped site.
+//
+$self_record = brush_sitealias_get_record('@self');
+if (empty($self_record)) {
+  brush_print('No bootstrapped site.');
+}
+else {
+  brush_print('The following site is bootstrapped:');
+  _brush_sitealias_print_record($self_record);
+}
