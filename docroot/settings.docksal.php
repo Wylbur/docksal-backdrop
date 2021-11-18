@@ -2,8 +2,8 @@
 
 $database = 'mysql://user:user@db/default';
 
-$config_directories['active'] = '/var/www/docroot/config/active';
-$config_directories['staging'] = '/var/www/docroot/config/staging';
+$config_directories['active'] = '/var/www/config/active';
+$config_directories['staging'] = '/var/www/config/staging';
 
 //$conf['stage_file_proxy_origin'] = 'https://domain.org';
 
