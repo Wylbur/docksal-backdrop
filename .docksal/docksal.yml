@@ -1,8 +1,8 @@
-version: "2.1"
+version: "3.9"
 
 services:
   db:
-    image: docksal/mysql:5.7
+    image: docksal/mariadb:10.4
   cli:
     image: ${COMPOSE_PROJECT_NAME_SAFE}_cli
     build: services/cli
