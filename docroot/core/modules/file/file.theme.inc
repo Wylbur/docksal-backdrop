@@ -269,7 +269,7 @@ function theme_file_upload_help($variables) {
 
   $descriptions = array();
 
-  if (strlen((string) $description)) {
+  if (strlen($description)) {
     $descriptions[] = $description;
   }
   if (isset($upload_validators['file_validate_size'])) {

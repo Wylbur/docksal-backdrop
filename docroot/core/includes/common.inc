@@ -770,7 +770,7 @@ function backdrop_parse_url($url) {
  *   The encoded path.
  */
 function backdrop_encode_path($path) {
-  return str_replace('%2F', '/', rawurlencode((string) $path));
+  return str_replace('%2F', '/', rawurlencode($path));
 }
 
 /**
@@ -1102,7 +1102,7 @@ function backdrop_http_request($url, array $options = array()) {
   // or PUT request. Some non-standard servers get confused by Content-Length in
   // at least HEAD/GET requests, and Squid always requires Content-Length in
   // POST/PUT requests.
-  $content_length = strlen((string) $options['data']);
+  $content_length = strlen($options['data']);
   if ($content_length > 0 || $options['method'] == 'POST' || $options['method'] == 'PUT') {
     $options['headers']['Content-Length'] = $content_length;
   }
@@ -1178,7 +1178,7 @@ function backdrop_http_request($url, array $options = array()) {
   $result->headers = array();
 
   // Parse the response headers.
-  while ($line = trim((string) array_shift($response))) {
+  while ($line = trim(array_shift($response))) {
     list($name, $value) = explode(':', $line, 2);
     $name = strtolower($name);
     if (isset($result->headers[$name]) && $name == 'set-cookie') {
@@ -1828,12 +1828,12 @@ function filter_xss($string, $allowed_tags = NULL) {
   // Store the text format.
   _filter_xss_split($allowed_tags, TRUE);
   // Remove NULL characters (ignored by some browsers).
-  $string = str_replace(chr(0), '', (string) $string);
+  $string = str_replace(chr(0), '', $string);
   // Remove Netscape 4 JS entities.
   $string = preg_replace('%&\s*\{[^}]*(\}\s*;?|$)%', '', $string);
 
   // Defuse all HTML entities.
-  $string = str_replace('&', '&amp;', (string) $string);
+  $string = str_replace('&', '&amp;', $string);
   // Change back only well-formed entities in our whitelist:
   // Decimal numeric entities.
   $string = preg_replace('/&amp;#([0-9]+;)/', '&#\1', $string);
@@ -2354,13 +2354,13 @@ function format_size($size, $langcode = NULL) {
 /**
  * Formats a time interval with the requested granularity.
  *
- * @param int $interval
+ * @param $interval
  *   The length of the interval in seconds.
- * @param int $granularity
+ * @param $granularity
  *   How many different units to display in the string.
- * @param string $langcode
- *   Optional language code to translate to a language other than what is used
- *   to display the page.
+ * @param $langcode
+ *   Optional language code to translate to a language other than
+ *   what is used to display the page.
  *
  * @return
  *   A translated string representation of the interval.
@@ -2380,7 +2380,7 @@ function format_interval($interval, $granularity = 2, $langcode = NULL) {
     $key = explode('|', $key);
     if ($interval >= $value) {
       $output .= ($output ? ' ' : '') . format_plural(floor($interval / $value), $key[0], $key[1], array(), array('langcode' => $langcode));
-      $interval = (int) $interval % $value;
+      $interval %= $value;
       $granularity--;
     }
 
@@ -2649,7 +2649,7 @@ function url($path = NULL, array $options = array()) {
   // Strip leading slashes from internal paths to prevent them becoming external
   // URLs without protocol. /example.com should not be turned into
   // //example.com.
-  $path = ltrim((string) $path, '/');
+  $path = ltrim($path, '/');
 
   global $base_url, $base_secure_url, $base_insecure_url;
 
@@ -2686,7 +2686,7 @@ function url($path = NULL, array $options = array()) {
   }
 
   $base = $options['absolute'] ? $options['base_url'] . '/' : base_path();
-  $prefix = empty($path) ? rtrim((string) $options['prefix'], '/') : $options['prefix'];
+  $prefix = empty($path) ? rtrim($options['prefix'], '/') : $options['prefix'];
 
   // Cache the clean URLs setting, as url() is called very frequently.
   static $backdrop_static_fast;
@@ -2741,8 +2741,8 @@ function url($path = NULL, array $options = array()) {
 /**
  * Returns TRUE if a path is external to Backdrop (e.g. http://example.com).
  *
- * If a path cannot be assessed by Backdrop's menu handler, then we must treat
- * it as potentially insecure.
+ * If a path cannot be assessed by Backdrop's menu handler, then we must
+ * treat it as potentially insecure.
  *
  * @param $path
  *   The internal path or external URL being linked to, such as "node/34" or
@@ -2752,12 +2752,11 @@ function url($path = NULL, array $options = array()) {
  *   Boolean TRUE or FALSE, where TRUE indicates an external path.
  */
 function url_is_external($path) {
-  $path = (string) $path;
   $colonpos = strpos($path, ':');
   // Some browsers treat \ as / so normalize to forward slashes.
   $path = str_replace('\\', '/', $path);
-  // Avoid calling backdrop_strip_dangerous_protocols(). If the path starts with
-  // 2 slashes then it is always considered an external URL without an explicit
+  // Avoid calling backdrop_strip_dangerous_protocols(). If the path starts with 2
+  // slashes then it is always considered an external URL without an explicit
   // protocol part.
   return (strpos($path, '//') === 0)
     // Leading control characters may be ignored or mishandled by browsers, so
@@ -3301,8 +3300,7 @@ function backdrop_set_time_limit($time_limit) {
  *   The path to the requested item or an empty string if the item is not found.
  */
 function backdrop_get_path($type, $name) {
-  $path = backdrop_get_filename($type, $name);
-  return dirname((string) $path);
+  return dirname(backdrop_get_filename($type, $name));
 }
 
 /**
@@ -8510,6 +8508,7 @@ function watchdog_severity_levels() {
   );
 }
 
+
 /**
  * Explodes a string of tags into an array.
  *
@@ -8519,7 +8518,7 @@ function backdrop_explode_tags($tags) {
   // This regexp allows the following types of user input:
   // this, "somecompany, llc", "and ""this"" w,o.rks", foo bar
   $regexp = '%(?:^|,\ *)("(?>[^"]*)(?>""[^"]* )*"|(?: [^",]*))%x';
-  preg_match_all($regexp, (string) $tags, $matches);
+  preg_match_all($regexp, $tags, $matches);
   $typed_tags = array_unique($matches[1]);
 
   $tags = array();

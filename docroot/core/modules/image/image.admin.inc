@@ -481,7 +481,6 @@ function image_resize_form($data) {
     '#min' => 1,
     '#max' => 1000000000,
   );
-
   return $form;
 }
 
@@ -506,7 +505,6 @@ function image_scale_form($data) {
     '#title' => t('Enable upscaling'),
     '#description' => t('Allows images to be made larger than their original size.'),
   );
-
   return $form;
 }
 
