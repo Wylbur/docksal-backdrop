@@ -1,10 +1,10 @@
 <?php
 
-$projectname = 'bs';
-$websiteuri  = 'brendasmeby.com';
-$remoteuser  = 'brendasmeby';
-$remotehost  = '173.236.95.18';
-$webroot     = 'web';
+$projectname = 'bd';
+$websiteuri  = 'backdrop.com';
+$remoteuser  = 'backdrop';
+$remotehost  = '';
+$webroot     = 'docroot';
 
 
 $aliases['lc'] = array (
