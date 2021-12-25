@@ -2022,7 +2022,7 @@ function file_fnmatch($pattern, $string) {
   if (!function_exists('fnmatch')) {
     return preg_match("#^" . strtr(preg_quote($pattern, '#'), array('\*' => '.*', '\?' => '.', '\[' => '[', '\]' => ']')) . "$#", $string);
   }
-  return fnmatch($pattern, $string);
+  return fnmatch((string) $pattern, (string) $string);
 }
 
 function file_get_mimetype_type($file) {
@@ -3438,7 +3438,7 @@ function file_view_file($file, $display = 'full', $langcode = NULL) {
     }
     $display_info = array(
       'type' => $formatter,
-      'settings' => $display['settings'][$formatter],
+      'settings' => isset($display['settings'][$formatter]) ? $display['settings'][$formatter] : array(),
     );
     $element = $function($file, $display_info, $langcode);
   }

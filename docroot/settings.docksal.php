@@ -20,13 +20,13 @@ $settings['hash_salt'] = 'ohmygosh';
 $database_charset = 'utf8mb4';
 
 $settings['trusted_host_patterns'] = array(
-  'bd\.docksal$',
+  'docksal-backdrop\.docksal$',
 );
 
-$base_url = 'http://bd.docksal'; // NO trailing slash!
+$base_url = 'http://docksal-backdrop.docksal'; // NO trailing slash!
 
 $settings['update_free_access'] = FALSE;
 
-# $config['system.core']['file_file_path'] = 'files';
-# $config['system.core']['file_temporary_path'] = '/tmp';
+$config['system.core']['file_file_path'] = 'files';
+$config['system.core']['file_temporary_path'] = '/tmp';
 $config['system.core']['file_private_path'] = '../private';

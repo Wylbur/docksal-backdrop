@@ -297,8 +297,8 @@ class UserRegistrationTestCase extends UserLoginTestBase {
         $this->backdropPostAJAX(NULL, $edit, 'test_user_field_add_more');
       }
       else {
-        $this->backdropPost(NULL, $edit, t('Add another item'));
-        $this->backdropPost(NULL, $edit, t('Add another item'));
+        $this->backdropPost(NULL, $edit, t('Add another'));
+        $this->backdropPost(NULL, $edit, t('Add another'));
       }
       // Submit with three values.
       $edit['test_user_field[und][1][value]'] = $value + 1;
@@ -1079,7 +1079,7 @@ class UserPictureTestCase extends BackdropWebTestCase {
       $this->assertRaw($text, 'File size cited as reason for failure.');
 
       // Check if file is not uploaded.
-      $this->assertFalse(is_file($pic_path), 'File was not uploaded.');
+      $this->assertFalse(is_file((string) $pic_path), 'File was not uploaded.');
     }
   }
 
@@ -1113,7 +1113,7 @@ class UserPictureTestCase extends BackdropWebTestCase {
       $this->assertRaw($text, 'Checking response on invalid image (dimensions).');
 
       // Check if file is not uploaded.
-      $this->assertFalse(is_file($pic_path), 'File was not uploaded.');
+      $this->assertFalse(is_file((string) $pic_path), 'File was not uploaded.');
     }
   }
 

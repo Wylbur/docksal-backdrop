@@ -429,6 +429,7 @@ class ThemeRegistry Extends BackdropCacheArray {
     return array_fill_keys(array_keys($this->completeRegistry), NULL);
   }
 
+  #[\ReturnTypeWillChange]
   public function offsetExists($offset) {
     // Since the theme registry allows for theme hooks to be requested that
     // are not registered, just check the existence of the key in the registry.
@@ -437,6 +438,7 @@ class ThemeRegistry Extends BackdropCacheArray {
     return array_key_exists($offset, $this->storage);
   }
 
+  #[\ReturnTypeWillChange]
   public function offsetGet($offset) {
     // If the offset is set but empty, it is a registered theme hook that has
     // not yet been requested. Offsets that do not exist at all were not
@@ -879,16 +881,15 @@ function backdrop_find_base_themes($themes, $key, $used_keys = array()) {
 /**
  * Generates themed output.
  *
- * All requests for themed output must go through this function (however,
- * calling the theme() function directly is strongly discouraged - see next
- * paragraph). It examines the request and routes it to the appropriate
- * @link themeable theme function or template @endlink, by checking the theme
- * registry.
+ * All requests for themed output must go through this function. It examines the
+ * request and routes it to the appropriate @link themeable theme function or
+ * template @endlink, by checking the theme registry.
  *
- * Avoid calling this function directly. It is preferable to replace direct
- * calls to the theme() function with calls to backdrop_render() by passing a
- * render array with a #theme key to backdrop_render(), which in turn calls
- * theme().
+ * You can call this function directly, or you can make a call to
+ * backdrop_render() by passing a render array with a #theme key, which in turn
+ * calls theme(). Either is acceptable. In some situations a render array will
+ * be preferable when the ability for other modules to alter the render array is
+ * provided.
  *
  * @section sec_theme_hooks Theme Hooks
  * Most commonly, the first argument to this function is the name of the theme
