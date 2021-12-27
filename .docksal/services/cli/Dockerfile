@@ -1,4 +1,4 @@
-FROM docksal/cli:php8.0
+FROM docksal/cli:php7.4
 
 # Set Drush, Brush and Bee aliases
 RUN \
