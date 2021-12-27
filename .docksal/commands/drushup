@@ -1,0 +1,38 @@
+cd ${PROJECT_ROOT}
+
+echo "Update Drush"
+if ls drush/*.aliases.drushrc.php 1> /dev/null 2>&1; then mv drush/*.aliases.drushrc.php . ; fi
+rm -rf drush 
+wget -qO drush.zip https://github.com/drush-ops/drush/archive/refs/heads/8.x.zip
+unzip -q drush.zip && rm drush.zip
+mv drush-8.x drush
+
+echo "Update Drush Backdrop commands"
+wget -qO backdrush.zip https://github.com/backdrop-contrib/backdrop-drush-extension/archive/refs/heads/1.x-1.x.zip
+unzip -q backdrush.zip && rm backdrush.zip
+mv backdrop-drush-extension-1.x-1.x drush/commands/backdrop
+
+echo "Update Drush with Composer install"
+cd drush
+composer install
+cd ${PROJECT_ROOT}
+
+echo "Replace Drush Aliases"
+if ls *.aliases.drushrc.php 1> /dev/null 2>&1; then mv *.aliases.drushrc.php drush/ ; fi
+
+echo "Update Bee"
+rm -rf bee
+wget -qO bee.zip https://github.com/backdrop-contrib/bee/archive/1.x-1.x.zip
+unzip -q bee.zip && rm bee.zip
+mv bee-1.x-1.x bee
+
+echo "Update Brush"
+if ls brush/*.aliases.brushrc.php 1> /dev/null 2>&1; then mv brush/*.aliases.brushrc.php . ; fi
+rm -rf brush
+wget -qO brush.zip https://github.com/backdrop-contrib/brush/archive/refs/heads/1.x-1.x.zip
+unzip -q brush.zip && rm brush.zip
+mv brush-1.x-1.x brush
+
+echo "Replace Brush Aliases"
+if ls *.aliases.brushrc.php 1> /dev/null 2>&1; then mv *.aliases.brushrc.php brush/ ; fi
+rm brush/mysite.aliases.brushrc.php

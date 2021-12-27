@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+## Compares configusing diff
+##
+## df a v
+
+cd ${PROJECT_ROOT}
+
+  case "$1" in 
+    a ) FROM="active";
+    ;;
+    s ) FROM="staging";
+    ;;
+    v ) FROM="versioned";
+    ;;
+    * ) FROM="active";
+    ;;
+  esac
+
+  case "$2" in 
+    a ) TO="active";
+    ;;
+    s ) TO="staging";
+    ;;
+    v ) TO="versioned";
+    ;;
+    * )  TO="versioned";
+    ;;
+  esac
+
+fin exec echo "File Differences | $FROM | $TO "
+fin exec diff -u --color /var/www/config/"$TO"/ /var/www/config/"$FROM"/ 
+

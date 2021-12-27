@@ -42,5 +42,3 @@ cd ${PROJECT_ROOT}
     fin exec rm ${FILES}
   fi
   fin exec rsync -v config/"$FROM"/*.json config/"$TO"
-
-
