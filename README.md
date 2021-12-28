@@ -50,10 +50,12 @@ https://github.com/Wylbur/docksal-backdrop
 Extract the repo to a project folder with a name to represent the project
 `~/Project/your-project-name`
 
-### Modify setting files
-Update the following files with the project name:
+### Copy settings files
+Make copies of the settings files, and update with the project name:
 
-`docroot/settings.docksal.php`
+`docroot/settings.ph_` -> `docroot/settings.php`
+`docroot/settings.docksal.ph_` -> `docroot/settings.docksal.php`
+`docroot/settings.live.ph_` -> `docroot/settings.live.php`
 - trusted_host_patterns
 - $base_url
 
@@ -73,4 +75,3 @@ Update the sync file to interact with your remote site install:
 
 ### Initiate website
 `fin init`
-

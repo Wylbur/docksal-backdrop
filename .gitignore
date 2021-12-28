@@ -18,3 +18,7 @@ docroot/sites/*/private
 
 # Ignore private files
 /private/*
+
+# Ignore settings files
+/docroot/settings.php
+/docroot/settings*.php
