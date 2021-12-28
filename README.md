@@ -15,6 +15,9 @@ Custom `fin` commands
 - brush (brush)
 - drush (drush)
 
+- cert
+(installs a local SSL certificate for your project)
+
 - conf 
 (copying config files between Active, Staging, Versioned folders)
 
