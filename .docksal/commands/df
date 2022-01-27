@@ -28,5 +28,4 @@ cd ${PROJECT_ROOT}
   esac
 
 fin exec echo "File Differences | $FROM | $TO "
-fin exec diff --brief --color /var/www/config/"$FROM"/ /var/www/config/"$TO"/
-
+fin exec diff --brief --color /var/www/config/"$TO"/ /var/www/config/"$FROM"/
